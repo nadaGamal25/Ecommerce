@@ -3,16 +3,17 @@ import { addBrand, allBrands, deleteBrand, getBrand, updateBrand } from './brand
 import { uploadSingleFile } from '../../fileUpload/fileUpload.js'
 import { validate } from '../../middleware/validate.js'
 import { addBrandVal, deleteBrandVal, getBrandVal, updateBrandVal } from './brand.validation.js'
+import { allowedTo, protectedRoutes } from '../auth/auth.controller.js'
 
 const brandRouter=express.Router()
 
 brandRouter.route('/')
-.post(uploadSingleFile('logo','brands'),validate(addBrandVal),addBrand)
-.get(allBrands)
+.post(protectedRoutes,allowedTo('admin'),uploadSingleFile('logo','brands'),validate(addBrandVal),addBrand)
+.get(protectedRoutes,allowedTo('user','admin'),allBrands)
 
 brandRouter.route('/:id')
-.get(validate(getBrandVal),getBrand)
-.put(uploadSingleFile('logo','brands'),validate(updateBrandVal),updateBrand)
-.delete(validate(deleteBrandVal),deleteBrand)
+.get(protectedRoutes,allowedTo('user','admin'),validate(getBrandVal),getBrand)
+.put(protectedRoutes,allowedTo('admin'),uploadSingleFile('logo','brands'),validate(updateBrandVal),updateBrand)
+.delete(protectedRoutes,allowedTo('admin'),validate(deleteBrandVal),deleteBrand)
 
 export default brandRouter

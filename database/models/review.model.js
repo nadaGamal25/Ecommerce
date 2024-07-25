@@ -9,6 +9,11 @@ const reviewSchema = new Schema({
       min: 0,
       max: 5,
     },
+    product:{
+      type:mongoose.Types.ObjectId,
+      ref:'Product',
+      required:true
+    },
     user:{
         type:mongoose.Types.ObjectId,
         ref:'User',
@@ -18,6 +23,13 @@ const reviewSchema = new Schema({
   },{
     timestamps: true
   });
+
+
+
+
+reviewSchema.pre(/^find/,function(){
+  this.populate('user','name')
+})  
   
 
 export const Review = model('Review', reviewSchema);

@@ -3,15 +3,16 @@ import { addCategory, allCategories, deleteCategory, getCategory, updateCategory
 import { uploadSingleFile } from '../../fileUpload/fileUpload.js'
 import { addCategoryVal, deleteCategoryVal, getCategoryVal, updateCategoryVal } from './category.validation.js'
 import { validate } from '../../middleware/validate.js'
+import { allowedTo, protectedRoutes } from '../auth/auth.controller.js'
 const categoryRouter=express.Router()
 
 categoryRouter.route('/')
-.post(uploadSingleFile('img','categories'),validate(addCategoryVal),addCategory)
-.get(allCategories)
+.post(protectedRoutes,allowedTo('admin'),uploadSingleFile('img','categories'),validate(addCategoryVal),addCategory)
+.get(protectedRoutes,allowedTo('user','admin'),allCategories)
 
 categoryRouter.route('/:id')
-.get(validate(getCategoryVal),getCategory)
-.put(uploadSingleFile('img','categories'),validate(updateCategoryVal),updateCategory)
-.delete(validate(deleteCategoryVal),deleteCategory)
+.get(protectedRoutes,allowedTo('user','admin'),validate(getCategoryVal),getCategory)
+.put(protectedRoutes,allowedTo('admin'),uploadSingleFile('img','categories'),validate(updateCategoryVal),updateCategory)
+.delete(protectedRoutes,allowedTo('admin'),validate(deleteCategoryVal),deleteCategory)
 
 export default categoryRouter

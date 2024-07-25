@@ -3,19 +3,7 @@ import { Brand } from "../../../database/models/brand.model.js"
 import { catchError } from "../../middleware/catchError.js"
 import {AppError} from "../../utils/appError.js"
 import { deleteOne, getAll, getOne } from "../handler/handler.js"
-import fs from 'fs'
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const deleteImageFile = (filePath) => {
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(`Failed to delete file: ${filePath}`, err);
-        }
-    });
-};
+import { deleteImageFile } from "../../utils/deleteOldImage.js"
 
 const addBrand=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.name)
@@ -34,8 +22,7 @@ const updateBrand=catchError(async(req,res,next)=>{
         return next(new AppError("brand not found", 404));
       }
     if (req.file && brand.logo) {
-    const oldImagePath = path.join(__dirname, '../../../uploads/brands', brand.logo);
-    deleteImageFile(oldImagePath);
+    deleteImageFile(brand.logo,'brands');
   }
 
   brand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -50,8 +37,7 @@ const deleteBrand = catchError(async (req, res, next) => {
 
     // Remove the image file
     if (document.logo) {
-        const imagePath = path.join(__dirname, '../../../uploads/brands', document.logo);
-        deleteImageFile(imagePath);
+        deleteImageFile(document.logo,'brands');
     }
 
     await Brand.findByIdAndDelete(req.params.id);

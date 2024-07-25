@@ -3,19 +3,7 @@ import { Product } from "../../../database/models/product.model.js"
 import { catchError } from "../../middleware/catchError.js"
 import {AppError} from "../../utils/appError.js"
 import { deleteOne, getAll, getOne } from "../handler/handler.js"
-import fs from 'fs'
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const deleteImageFile = (filePath) => {
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(`Failed to delete file: ${filePath}`, err);
-        }
-    });
-};
+import { deleteImageFile } from "../../utils/deleteOldImage.js"
 
 const addProduct=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.title)
@@ -37,13 +25,11 @@ const updateProduct=catchError(async(req,res,next)=>{
       }
 
     if (req.files.imgCover && product.imgCover) {
-        const oldImgCoverPath = path.join(__dirname, '../../../uploads/products', product.imgCover);
-        deleteImageFile(oldImgCoverPath);
+        deleteImageFile(product.imgCover,'products');
     }
     if (req.files.images && product.images.length > 0) {
         product.images.forEach(image => {
-            const oldImagePath = path.join(__dirname, '../../../uploads/products', image);
-            deleteImageFile(oldImagePath);
+            deleteImageFile(image,'products');
         });
     }
 
@@ -59,15 +45,13 @@ const deleteProduct = catchError(async (req, res, next) => {
 
     // Remove the image file
     if (document.imgCover) {
-        const imgCoverPath = path.join(__dirname, '../../../uploads/products', document.imgCover);
-        deleteImageFile(imgCoverPath);
+        deleteImageFile(document.imgCover,'products');
     }
 
     // Remove all other image files
     if (document.images && document.images.length > 0) {
         document.images.forEach(image => {
-            const imagePath = path.join(__dirname, '../../../uploads/products', image);
-            deleteImageFile(imagePath);
+            deleteImageFile(image,'products');
         });
     }
 
@@ -76,8 +60,11 @@ const deleteProduct = catchError(async (req, res, next) => {
 });
 
 
-const allProducts=getAll(Product)
-
+const allProducts=catchError(async(req,res,next)=>{
+    let document=await Product.find()
+    res.status(200).json({message:"success",document})
+})
+// const allProducts=getAll(Product)
 const getProduct=getOne(Product)
 
 

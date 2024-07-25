@@ -1,8 +1,10 @@
+import authRouter from "./auth/auth.routes.js"
 import brandRouter from "./brand/brand.routes.js"
 import categoryRouter from "./category/category.routes.js"
 import productRouter from "./product/product.routes.js"
 import subCategoryRouter from "./subCategory/subCategory.routes.js"
 import userRouter from "./user/user.routes.js"
+import wishlistRouter from "./wishlist/wishList.routes.js"
 
 
 export const bootstrap=(app)=>{
@@ -11,4 +13,6 @@ export const bootstrap=(app)=>{
     app.use('/api/brands',brandRouter)
     app.use('/api/products',productRouter)
     app.use('/api/user',userRouter)
+    app.use('/api/auth',authRouter)
+    app.use('/api/wishlists',wishlistRouter)
 }

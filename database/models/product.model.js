@@ -68,9 +68,18 @@ const productSchema = new Schema({
 
  
   },{
-    timestamps: true
+    timestamps: true, toJSON:{virtuals:true}
   });
   
+productSchema.virtual('myReviews',{
+    ref:'Review',
+    localField:'_id',
+    foreignField:'product'
+})  
+
+productSchema.pre(/^find/,function(){
+    this.populate('myReviews')
+})
 
   productSchema.post('find',function(doc){
     doc.imgCover = `http://127.0.0.1:3000/uploads/products/${doc.imgCover}`;
