@@ -11,7 +11,7 @@ const cartSchema = new Schema({
         quantity:{type:Number,default:1},
         price:{type:Number},
     }],
-    totalPrice:{type:Number,default:0},
+    totalCartPrice:{type:Number,default:0},
     discount:Number,
     totalCartPriceAfterDiscount:Number,
  

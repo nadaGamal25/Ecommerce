@@ -27,7 +27,6 @@ const categorySchema = new Schema({
   
   categorySchema.post('find',function(doc){
   doc.img = `http://127.0.0.1:3000/uploads/categories/${doc.img}`;
-
 })   
 
 export const Category = model('Category', categorySchema);

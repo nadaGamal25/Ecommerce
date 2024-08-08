@@ -72,20 +72,20 @@ const allowedTo=(...roles)=>{
 
 
 //update account.
-const updateUser = catchError(async (req, res, next) => {
-    let user = await User.findById(req.user.userId);
+const updateAccount = catchError(async (req, res, next) => {
+    let user = await User.findById(req.user._id);
     if (!user) {
         return next(new AppError('User not found', 404));
     }
    
-    user = await User.findByIdAndUpdate(req.user.userId, req.body, { new: true });
+    user = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
 
     res.status(200).json({ message: 'Success', user });
 });
 
 //delete account.
 const deleteUser = catchError(async (req, res, next) => {
-    let user = await User.findByIdAndDelete(req.user.userId);
+    let user = await User.findByIdAndDelete(req.user._id);
     if (!user) {
         return next(new AppError('User not found', 404));
     }
@@ -94,7 +94,7 @@ const deleteUser = catchError(async (req, res, next) => {
 
 //Get user account data 
 const getAccountData=catchError(async(req,res)=>{
-    let user = await User.findById(req.user.userId);
+    let user = await User.findById(req.user._id);
     if (!user) {
         return next(new AppError('User not found', 404));
     }
@@ -102,5 +102,5 @@ const getAccountData=catchError(async(req,res)=>{
 })
 
 export{
-    signup,signin,updateUser,deleteUser,getAccountData,changePassword,protectedRoutes,allowedTo
+    signup,signin,updateAccount,deleteUser,getAccountData,changePassword,protectedRoutes,allowedTo
 }

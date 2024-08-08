@@ -14,6 +14,8 @@ const updateUserVal=Joi.object({
     isBlocked:Joi.boolean(),
     confirmEmail:Joi.boolean(),
     email:Joi.string().email(),
+    id:Joi.string().hex().length(24).required(),
+
 })
 
 const deleteUserVal=Joi.object({

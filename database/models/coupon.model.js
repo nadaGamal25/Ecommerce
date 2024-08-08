@@ -2,7 +2,7 @@ import mongoose, { Schema, model } from "mongoose"
 
 const couponSchema = new Schema({
     code: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     }, 
@@ -12,11 +12,6 @@ const couponSchema = new Schema({
     },
     expires:{
         type: Date,
-    },
-    createdBy:{
-        type:mongoose.Types.ObjectId,
-        ref:'User',
-        required:true
     }
  
   },{

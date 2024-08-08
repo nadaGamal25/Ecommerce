@@ -1,29 +1,26 @@
 import Joi from "joi";
 
-const addSubCategoryVal=Joi.object({
-    name:Joi.string().min(1).max(50).required(),
-    category:Joi.string().hex().length(24).required(),
-    createdBy:Joi.string().hex().length(24).required(),
+const addCouponVal=Joi.object({
+    code:Joi.string().min(2).required(),
+    discount:Joi.number().min(1).required(),
+    expires:Joi.date().required(),
 })
 
-const updateSubCategoryVal=Joi.object({
-    name:Joi.string().min(1).max(50),
-    category:Joi.string().hex().length(24),
-    createdBy:Joi.string().hex().length(24),
-    id:Joi.string().hex().length(24),
-})
-
-const deleteSubCategoryVal=Joi.object({
+const getCouponVal=Joi.object({
     id:Joi.string().hex().length(24).required(),
 })
 
-const getSubSubCategoryVal=Joi.object({
+const updateCouponVal=Joi.object({
+    code:Joi.string().min(2),
+    discount:Joi.number().min(1),
+    expires:Joi.date(),
+    id:Joi.string().hex().length(24).required(),
+})
+
+const deleteCouponVal=Joi.object({
     id:Joi.string().hex().length(24).required(),
 })
 
 export{
-    addSubCategoryVal,
-    updateSubCategoryVal,
-    deleteSubCategoryVal,
-    getSubSubCategoryVal
+   addCouponVal,getCouponVal,updateCouponVal,deleteCouponVal
 }
