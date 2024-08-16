@@ -42,6 +42,7 @@ const addToCart=catchError(async(req,res,next)=>{
     }
 })
 
+
 const updateQuantity=catchError(async(req,res,next)=>{
     let cart =await Cart.findOne({user:req.user._id})
 
@@ -78,12 +79,16 @@ const clearUserCart=catchError(async(req,res,next)=>{
 
 const applyCoupon=catchError(async(req,res,next)=>{
     let coupon =await Coupon.findOne({code:req.body.code,expires:{ $gte:Date.now()}})
+    // console.log(coupon)
     if(!coupon) return next(new AppError('invalid coupon',404))
     let cart =await Cart.findOne({user:req.user._id})
     cart.discount =coupon.discount
+    // calcTotalPrice(cart)
     await cart.save()
     res.status(200).json({message:'success',cart})
 })
+
+
 
 export{
     addToCart,updateQuantity,removeItemFromCart,getLoggedUserCart,clearUserCart,applyCoupon

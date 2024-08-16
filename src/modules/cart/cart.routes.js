@@ -15,6 +15,6 @@ cartRouter.route('/:id')
 .put(protectedRoutes,allowedTo('user'),validate(updateQuantityVal) ,updateQuantity)
 .delete(protectedRoutes,allowedTo('user') ,validate(removeItemFromCartVal),removeItemFromCart)
 
-cartRouter.post('/apply-coupon',protectedRoutes,allowedTo('user'),validate(applyCouponVal) ,applyCoupon)
+cartRouter.post('/apply-coupon/:id',protectedRoutes,allowedTo('user'),validate(applyCouponVal) ,applyCoupon)
 
 export default cartRouter

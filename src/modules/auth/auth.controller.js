@@ -30,6 +30,7 @@ const signin=catchError(async(req,res,next)=>{
 //change password
 const changePassword=catchError(async(req,res,next)=>{
     let user = await User.findById(req.user._id)
+    console.log(req.body.oldPassword,user.password)
     if(user && bcrypt.compareSync(req.body.oldPassword,user.password)){
         let token = jwt.sign({userId:user._id, role:user.role},secretKey)
         await User.findByIdAndUpdate(req.user._id, {password:req.body.newPassword,passwordChangedAt:Date.now()}, { new: true })
@@ -37,6 +38,7 @@ const changePassword=catchError(async(req,res,next)=>{
     }
     next(new AppError('Invalid password',400))
 })
+
 
 //protectedRoutes
 const protectedRoutes=catchError(async(req,res,next)=>{

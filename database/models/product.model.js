@@ -1,4 +1,7 @@
-import mongoose, { Schema, model } from "mongoose"
+import dotenv from 'dotenv';
+import mongoose, { Schema, model } from "mongoose";
+dotenv.config();
+const baseUrl = process.env.BASE_URL
 
 const productSchema = new Schema({
     title: {
@@ -17,9 +20,11 @@ const productSchema = new Schema({
     },
     imgCover: {
       type: String,
+      required: true
     },
     images:{
         type: [String],
+        required: true
     },
     price: {
         type: Number,
@@ -81,9 +86,9 @@ productSchema.pre(/^find/,function(){
     this.populate('myReviews')
 })
 
-  productSchema.post('find',function(doc){
-    doc.imgCover = `http://127.0.0.1:3000/uploads/products/${doc.imgCover}`;
-    doc.images =doc.images.map(img=> `http://127.0.0.1:3000/uploads/products/`+img);
+productSchema.post('init',function(doc){
+    doc.imgCover = `${baseUrl}/uploads/products/${doc.imgCover}`;
+    doc.images =doc.images.map(img=> `${baseUrl}/uploads/products/`+img);
 
   
   })   

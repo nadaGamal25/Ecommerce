@@ -34,7 +34,8 @@ const updateCategory=catchError(async(req,res,next)=>{
         return next(new AppError("Category not found", 404));
       }
     if (req.file && category.img) {
-    deleteImageFile(category.img,'categories');
+        let filename = category.img.split("categories/")[1]
+        deleteImageFile(filename,'categories');
   }
 
   category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -46,10 +47,12 @@ const deleteCategory = catchError(async (req, res, next) => {
     if (!document) {
         return next(new AppError("Document not found", 404));
     }
-
+    
     // Remove the image file
     if (document.img) {
-        deleteImageFile(document.img,'categories');
+        const filename = document.img.split("categories/")[1]
+        // console.log(filename)
+        deleteImageFile(filename,'categories');
     }
 
     await Category.findByIdAndDelete(req.params.id);

@@ -13,6 +13,6 @@ categoryRouter.route('/')
 categoryRouter.route('/:id')
 .get(protectedRoutes,allowedTo('user','admin'),validate(getCategoryVal),getCategory)
 .put(protectedRoutes,allowedTo('admin'),uploadSingleFile('img','categories'),validate(updateCategoryVal),updateCategory)
-.delete(protectedRoutes,allowedTo('admin'),validate(deleteCategoryVal),deleteCategory)
+.delete(/*protectedRoutes,allowedTo('admin')*/validate(deleteCategoryVal),deleteCategory)
 
 export default categoryRouter

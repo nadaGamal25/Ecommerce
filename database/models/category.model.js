@@ -1,4 +1,7 @@
 import mongoose, { Schema, model } from "mongoose"
+import dotenv from 'dotenv';
+dotenv.config();
+const baseUrl = process.env.BASE_URL
 
 const categorySchema = new Schema({
     name: {
@@ -25,8 +28,8 @@ const categorySchema = new Schema({
     timestamps: true
   });
   
-  categorySchema.post('find',function(doc){
-  doc.img = `http://127.0.0.1:3000/uploads/categories/${doc.img}`;
+  categorySchema.post('init',function(doc){
+  doc.img = `${baseUrl}/uploads/categories/${doc.img}`;  
 })   
 
 export const Category = model('Category', categorySchema);

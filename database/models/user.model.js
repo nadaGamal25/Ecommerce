@@ -31,7 +31,7 @@ const userSchema = new Schema({
         default: false,
       },
     passwordChangedAt:Date,  
-    wishlist:[{type:mongoose.Types.ObjectId,ref:'product'}],
+    wishlist:[{type:mongoose.Types.ObjectId,ref:'Product'}],
     addresses:[{
       city:String,
       street:String,

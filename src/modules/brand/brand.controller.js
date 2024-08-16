@@ -22,7 +22,8 @@ const updateBrand=catchError(async(req,res,next)=>{
         return next(new AppError("brand not found", 404));
       }
     if (req.file && brand.logo) {
-    deleteImageFile(brand.logo,'brands');
+        let filename = brand.logo.split("brands/")[1]
+    deleteImageFile(filename,'brands');
   }
 
   brand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -37,7 +38,8 @@ const deleteBrand = catchError(async (req, res, next) => {
 
     // Remove the image file
     if (document.logo) {
-        deleteImageFile(document.logo,'brands');
+        let filename = document.logo.split("brands/")[1]
+        deleteImageFile(filename,'brands');
     }
 
     await Brand.findByIdAndDelete(req.params.id);

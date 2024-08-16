@@ -16,11 +16,13 @@ const removeFromWishList=catchError(async(req,res,next)=>{
     !wishlist || res.status(200).json({message:"success",wishlist:wishlist.wishlist})
 })
 
-const getLoggedUserWishList=catchError(async(req,res,next)=>{
+const getLoggedUserWishList=async(req,res,next)=>{
     let wishlist=await User.findById(req.user._id).populate('wishlist')
     wishlist || next(new AppError("wishlist not found",404))
     !wishlist || res.status(200).json({message:"success",wishlist:wishlist.wishlist})
-})
+    return res.json("hello")
+}
+
 
 export{
     addToWishList,

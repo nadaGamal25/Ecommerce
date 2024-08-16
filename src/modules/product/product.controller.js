@@ -25,11 +25,12 @@ const updateProduct=catchError(async(req,res,next)=>{
       }
 
     if (req.files.imgCover && product.imgCover) {
-        deleteImageFile(product.imgCover,'products');
+        let filename = product.imgCover.split("products/")[1]
+        deleteImageFile(filename,'products');
     }
     if (req.files.images && product.images.length > 0) {
         product.images.forEach(image => {
-            deleteImageFile(image,'products');
+            deleteImageFile(image.split("products/")[1],'products');
         });
     }
 
@@ -45,13 +46,14 @@ const deleteProduct = catchError(async (req, res, next) => {
 
     // Remove the image file
     if (document.imgCover) {
-        deleteImageFile(document.imgCover,'products');
+        let filename = document.imgCover.split("products/")[1]
+        deleteImageFile(filename,'products');
     }
 
     // Remove all other image files
     if (document.images && document.images.length > 0) {
         document.images.forEach(image => {
-            deleteImageFile(image,'products');
+            deleteImageFile(image.split("products/")[1],'products');
         });
     }
 

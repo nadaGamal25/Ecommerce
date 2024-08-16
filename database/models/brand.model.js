@@ -1,4 +1,7 @@
 import mongoose, { Schema, model } from "mongoose"
+import dotenv from 'dotenv';
+dotenv.config();
+const baseUrl = process.env.BASE_URL
 
 const brandSchema = new Schema({
     name: {
@@ -25,8 +28,8 @@ const brandSchema = new Schema({
     timestamps: true
   });
   
-  brandSchema.post('find',function(doc){
-    doc.logo = `http://127.0.0.1:3000/uploads/categories/${doc.logo}`;
+  brandSchema.post('init',function(doc){
+    doc.logo = `${baseUrl}/uploads/categories/${doc.logo}`;
   
   })   
 
