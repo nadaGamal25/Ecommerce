@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import mongoose, { Schema, model } from "mongoose";
+import { Review } from './review.model.js';
 dotenv.config();
 const baseUrl = process.env.BASE_URL
 
@@ -33,7 +34,6 @@ const productSchema = new Schema({
     },
     priceAfterDiscount: {
         type: Number,
-        required:true,
         min:0
     },
     sold:{

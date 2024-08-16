@@ -26,7 +26,7 @@ const addProductVal=Joi.object({
         })
     ).min(1),
     price: Joi.number().min(0).required(),
-    priceAfterDiscount: Joi.number().min(0).required(),
+    priceAfterDiscount: Joi.number().min(0),
     sold: Joi.number().min(0),
     stock: Joi.number().min(0),
     category: Joi.string().hex().length(24).required(),
