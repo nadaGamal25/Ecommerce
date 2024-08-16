@@ -25,11 +25,7 @@ const userSchema = new Schema({
       required:true,
       default: false,
     },
-    confirmEmail:{
-        type: Boolean,
-        required:true,
-        default: false,
-      },
+    
     passwordChangedAt:Date,  
     wishlist:[{type:mongoose.Types.ObjectId,ref:'Product'}],
     addresses:[{
