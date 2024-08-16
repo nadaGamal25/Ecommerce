@@ -2,6 +2,7 @@ import { Cart } from "../../../database/models/cart.model.js"
 import {Coupon} from "../../../database/models/coupon.model.js"
 import { Order } from "../../../database/models/order.model.js"
 import {Product} from "../../../database/models/product.model.js"
+import { User } from "../../../database/models/user.model.js"
 import { catchError } from "../../middleware/catchError.js"
 import { AppError } from "../../utils/appError.js"
 import Stripe from 'stripe';
@@ -83,9 +84,50 @@ const createCheckoutSession=catchError(async(req,res,next)=>{
 
 })
 
+const createWebhookOrder=catchError(async(req,res,next)=>{
+    const sig = request.headers['stripe-signature'].toString();
+  
+    let event = stripe.webhooks.constructEvent(request.body, sig, "whsec_Rl4mCuMeQVV0NYjAOGTIlp4nBUKixAQh");
+   
+    // Handle the event
+    let checkout 
+    if (event.type == 'checkout.session.completed') {
+        checkout = event.data.object;
+        let cart=await Cart.findById(checkout.client_reference_id)
+        if(!cart) return next(new AppError("cart not found",404))
+        
+        let user =await User.findOne({email:checkout.customer_email})
+        let order=new Order({
+            user: user._id,
+            orderItems:cart.cartItems,
+            shippingAddress:checkout.metadata,
+            totalOrderPrice:checkout.amount_total / 100,
+            paymentType:'card',
+            isPaid:true
+        })
+        await order.save()
+    
+        let options=cart.cartItems.map((prod)=>{
+            return {
+                updateOne:{
+                    "filter":{_id:prod.product},
+                    "update":{$inc:{sold:prod.quantity,stock: -prod.quantity}}
+                }
+            }
+        })
+        await Product.bulkWrite(options)
+        await Cart.findByIdAndDelete(cart._id)
+        }
+  
+    // Return a 200 response to acknowledge receipt of the event
+    response.json({message:"success",checkoutSessionCompleted});
+   
+
+})
+
 
 export{
-    createCashOrder,getAllOrders,getUserOrders,createCheckoutSession
+    createCashOrder,getAllOrders,getUserOrders,createCheckoutSession,createWebhookOrder
 }
 
 
