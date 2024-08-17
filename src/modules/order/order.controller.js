@@ -18,7 +18,11 @@ const createCashOrder=catchError(async(req,res,next)=>{
         user:req.user._id,
         orderItems:cart.cartItems,
         shippingAddress:req.body.shippingAddress,
-        totalOrderPrice
+        totalOrderPrice,
+        isPaid:true,
+        paidAt:Date.now(),
+        isDelivered:true,
+        deliveredAt:Date.now(),
     })
     await order.save()
 
@@ -103,7 +107,10 @@ const createWebhookOrder=catchError(async(req,res,next)=>{
             shippingAddress:checkout.metadata,
             totalOrderPrice:checkout.amount_total / 100,
             paymentType:'card',
-            isPaid:true
+            isPaid:true,
+            paidAt:Date.now(),
+            isDelivered:true,
+            deliveredAt:Date.now(),
         })
         await order.save()
     

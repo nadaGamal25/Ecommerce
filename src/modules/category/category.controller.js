@@ -1,10 +1,12 @@
 import slugify from "slugify"
 import { Category } from "../../../database/models/category.model.js"
+import {SubCategory} from "../../../database/models/subCategory.model.js"
 import { catchError } from "../../middleware/catchError.js"
 import {AppError} from "../../utils/appError.js"
 import { deleteOne, getAll, getOne } from "../handler/handler.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
 import { ApiFeatures } from "../../utils/apiFeatures.js"
+import { Product } from "../../../database/models/product.model.js"
 
 
 // const __filename = fileURLToPath(import.meta.url);
@@ -56,6 +58,8 @@ const deleteCategory = catchError(async (req, res, next) => {
     }
 
     await Category.findByIdAndDelete(req.params.id);
+    await SubCategory.deleteMany({ category: req.params.id });
+    await Product.deleteMany({ category: req.params.id });
     res.status(200).json({ message: "Success" });
 });
 

@@ -1,9 +1,10 @@
 import slugify from "slugify"
 import { Brand } from "../../../database/models/brand.model.js"
+import { Product } from "../../../database/models/product.model.js"
 import { catchError } from "../../middleware/catchError.js"
-import {AppError} from "../../utils/appError.js"
-import { deleteOne, getAll, getOne } from "../handler/handler.js"
+import { AppError } from "../../utils/appError.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
+import { getAll, getOne } from "../handler/handler.js"
 
 const addBrand=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.name)
@@ -43,6 +44,7 @@ const deleteBrand = catchError(async (req, res, next) => {
     }
 
     await Brand.findByIdAndDelete(req.params.id);
+    await Product.deleteMany({ category: req.params.id });
     res.status(200).json({ message: "Success" });
 });
 
@@ -52,6 +54,6 @@ const allBrands=getAll(Brand)
 const getBrand=getOne(Brand)
 
 
-export{
-    addBrand,allBrands,getBrand,updateBrand,deleteBrand
+export {
+    addBrand, allBrands, deleteBrand, getBrand, updateBrand
 }

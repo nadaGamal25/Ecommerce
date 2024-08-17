@@ -4,6 +4,8 @@ import { catchError } from "../../middleware/catchError.js"
 import {AppError} from "../../utils/appError.js"
 import { deleteOne, getAll, getOne } from "../handler/handler.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
+import { Review } from "../../../database/models/review.model.js"
+import { User } from "../../../database/models/user.model.js"
 
 const addProduct=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.title)
@@ -58,6 +60,11 @@ const deleteProduct = catchError(async (req, res, next) => {
     }
 
     await Product.findByIdAndDelete(req.params.id);
+    await Review.deleteMany({ product: req.params.id });
+    await User.findOneAndUpdate({wishlist:req.params.id},
+        {$pull:{wishlist:req.params.id}},{new:true}
+    )
+
     res.status(200).json({ message: "Success" });
 });
 

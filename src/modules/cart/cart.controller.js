@@ -58,7 +58,7 @@ const updateQuantity=catchError(async(req,res,next)=>{
 
 const removeItemFromCart=catchError(async(req,res,next)=>{
     let cart =await Cart.findOneAndUpdate({user:req.user._id},
-        {$pull:{cartItems:{_id:req.params.id}}},{new:tru}
+        {$pull:{cartItems:{_id:req.params.id}}},{new:true}
     )
     calcTotalPrice(cart)
     await cart.save()

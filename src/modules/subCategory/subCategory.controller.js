@@ -1,8 +1,9 @@
 import slugify from "slugify"
-import { catchError } from "../../middleware/catchError.js"
+import { Product } from "../../../database/models/product.model.js"
 import { SubCategory } from "../../../database/models/subCategory.model.js"
-import {AppError} from "../../utils/appError.js"
-import { deleteOne, getAll, getOne } from "../handler/handler.js"
+import { catchError } from "../../middleware/catchError.js"
+import { AppError } from "../../utils/appError.js"
+import { getAll, getOne } from "../handler/handler.js"
 
 const addSubCategory=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.name)
@@ -18,13 +19,22 @@ const updateSubCategory=catchError(async(req,res,next)=>{
     !subCategory || res.status(200).json({message:"success",subCategory})
 })
 
-const deleteSubCategory=deleteOne(SubCategory)
+const deleteSubCategory=catchError(async (req, res, next) => {
+    let document = await Category.findById(req.params.id);
+    if (!document) {
+        return next(new AppError("Document not found", 404));
+    }
+  
+    await SubCategory.findByIdAndDelete(req.params.id);
+    await Product.deleteMany({ category: req.params.id });
+    res.status(200).json({ message: "Success" });
+});
 
 const allSubCategories=getAll(SubCategory)
 
 const getSubCategory=getOne(SubCategory)
 
 
-export{
-    addSubCategory,allSubCategories,getSubCategory,updateSubCategory,deleteSubCategory
+export {
+    addSubCategory, allSubCategories, deleteSubCategory, getSubCategory, updateSubCategory
 }
