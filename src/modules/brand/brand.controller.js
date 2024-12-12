@@ -5,10 +5,16 @@ import { catchError } from "../../middleware/catchError.js"
 import { AppError } from "../../utils/appError.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
 import { getAll, getOne } from "../handler/handler.js"
+import { uploadToCloudinary } from "../../fileUpload/fileUpload.js";
 
 const addBrand=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.name)
-    req.body.logo=req.file.filename
+    // req.body.logo=req.file.filename
+    if (req.file) {
+        // Upload image buffer to Cloudinary
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer, 'brands', req.file.originalname);
+        req.body.logo = cloudinaryResult.secure_url; // Store Cloudinary URL in req.body
+    }
     let brand=new Brand(req.body)
     await brand.save()
     res.status(200).json({message:"success",brand})
@@ -16,16 +22,21 @@ const addBrand=catchError(async(req,res,next)=>{
 
 const updateBrand=catchError(async(req,res,next)=>{
     if(req.body.slug) req.body.slug=slugify(req.body.name)
-    if(req.file) req.body.logo=req.file.filename
+    // if(req.file) req.body.logo=req.file.filename
+    if (req.file) {
+        // Upload image buffer to Cloudinary
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer, 'brands', req.file.originalname);
+        req.body.logo = cloudinaryResult.secure_url; // Store Cloudinary URL in req.body
+    }
     let brand = await Brand.findById(req.params.id);
 
     if (!brand) {
         return next(new AppError("brand not found", 404));
       }
-    if (req.file && brand.logo) {
-        let filename = brand.logo.split("brands/")[1]
-    deleteImageFile(filename,'brands');
-  }
+//     if (req.file && brand.logo) {
+//         let filename = brand.logo.split("brands/")[1]
+//     deleteImageFile(filename,'brands');
+//   }
 
   brand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.status(200).json({ message: "Success", brand });
@@ -38,10 +49,10 @@ const deleteBrand = catchError(async (req, res, next) => {
     }
 
     // Remove the image file
-    if (document.logo) {
-        let filename = document.logo.split("brands/")[1]
-        deleteImageFile(filename,'brands');
-    }
+    // if (document.logo) {
+    //     let filename = document.logo.split("brands/")[1]
+    //     deleteImageFile(filename,'brands');
+    // }
 
     await Brand.findByIdAndDelete(req.params.id);
     await Product.deleteMany({ category: req.params.id });

@@ -6,19 +6,64 @@ import { deleteOne, getAll, getOne } from "../handler/handler.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
 import { Review } from "../../../database/models/review.model.js"
 import { User } from "../../../database/models/user.model.js"
+import { uploadToCloudinary } from "../../fileUpload/fileUpload.js";
 
 const addProduct=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.title)
-    req.body.imgCover=req.files.imgCover[0].filename
-    req.body.images=req.files.images.map(img=>img.filename)
+    // req.body.imgCover=req.files.imgCover[0].filename
+    // req.body.images=req.files.images.map(img=>img.filename)
+    if (req.files && req.files.images) {
+        req.body.images = [];
+        
+        for (let img of req.files.images) {
+            try {
+                const cloudinaryResult = await uploadToCloudinary(img.buffer, 'products', img.originalname);
+                req.body.images.push(cloudinaryResult.secure_url);
+            } catch (error) {
+                console.error('Error uploading to Cloudinary', error);
+                return next(new AppError('خطأ فى تحميل الصور', 400));
+            }
+        }
+    }
+  
+    if (req.files && req.files.imgCover && req.files.imgCover[0]) {
+        try {
+            const cloudinaryResult = await uploadToCloudinary(req.files.imgCover[0].buffer, 'products', req.files.imgCover[0].originalname);
+            req.body.imgCover = cloudinaryResult.secure_url; // Ensure this line sets a string in `req.body.imgCover`
+        } catch (error) {
+            return next(new AppError('خطأ فى تحميل الصورة', 400));
+        }
+    }
     let product=new Product(req.body)
     await product.save()
     res.status(200).json({message:"success",product})
 })
 
 const updateProduct=catchError(async(req,res,next)=>{
-    if(req.body.slug) req.body.slug=slugify(req.body.title)
-    if(req.files.imgCover) req.body.imgCover=req.files.imgCover[0].filename
+    // if(req.body.slug) req.body.slug=slugify(req.body.title)
+    // if(req.files.imgCover) req.body.imgCover=req.files.imgCover[0].filename
+    if (req.files && req.files.images) {
+        req.body.images = [];
+        
+        for (let img of req.files.images) {
+            try {
+                const cloudinaryResult = await uploadToCloudinary(img.buffer, 'products', img.originalname);
+                req.body.images.push(cloudinaryResult.secure_url);
+            } catch (error) {
+                console.error('Error uploading to Cloudinary', error);
+                return next(new AppError('خطأ فى تحميل الصور', 400));
+            }
+        }
+    }
+  
+    if (req.files && req.files.imgCover && req.files.profileImg[0]) {
+        try {
+            const cloudinaryResult = await uploadToCloudinary(req.files.profileImg[0].buffer, 'products', req.files.profileImg[0].originalname);
+            req.body.profileImg = cloudinaryResult.secure_url; // Ensure this line sets a string in `req.body.profileImg`
+        } catch (error) {
+            return next(new AppError('خطأ فى تحميل الصورة', 400));
+        }
+    }
     if(req.files.images) req.body.images=req.files.images.map(img=>img.filename)
     let product = await Product.findById(req.params.id);
 

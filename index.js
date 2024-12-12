@@ -17,7 +17,7 @@ app.post('api/webhook', express.raw({type: 'application/json'}),createWebhookOrd
 app.use(cors())
 app.use(express.json())
 
-app.use('/uploads',express.static('uploads'))
+// app.use('/uploads',express.static('uploads'))
 
 bootstrap(app)
 

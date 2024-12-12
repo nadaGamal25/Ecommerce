@@ -3,28 +3,30 @@ import Joi from "joi";
 const addProductVal=Joi.object({
     title: Joi.string().min(1).max(50).required(),
     desc: Joi.string().min(1).required(),
-    imgCover: Joi.object({
-        fieldname: Joi.string().required(),
-        originalname: Joi.string().required(),
-        encoding: Joi.string().required(),
-        mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
-        size: Joi.number().max(5242880).required(),
-        destination: Joi.string().required(),
-        filename: Joi.string().required(),
-        path: Joi.string().required()
-    }).required(),
-    images: Joi.array().items(
-        Joi.object({
-            fieldname: Joi.string().required(),
-            originalname: Joi.string().required(),
-            encoding: Joi.string().required(),
-            mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
-            size: Joi.number().max(5242880).required(),
-            destination: Joi.string().required(),
-            filename: Joi.string().required(),
-            path: Joi.string().required()
-        })
-    ).min(1),
+    imgCover: Joi.required(),
+    // Joi.object({
+    //     fieldname: Joi.string().required(),
+    //     originalname: Joi.string().required(),
+    //     encoding: Joi.string().required(),
+    //     mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
+    //     size: Joi.number().max(5242880).required(),
+    //     destination: Joi.string().required(),
+    //     filename: Joi.string().required(),
+    //     path: Joi.string().required()
+    // }).required(),
+    images:Joi.array().items().min(1).required(),
+    // Joi.array().items(
+    //     Joi.object({
+    //         fieldname: Joi.string().required(),
+    //         originalname: Joi.string().required(),
+    //         encoding: Joi.string().required(),
+    //         mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
+    //         size: Joi.number().max(5242880).required(),
+    //         destination: Joi.string().required(),
+    //         filename: Joi.string().required(),
+    //         path: Joi.string().required()
+    //     })
+    // ).min(1),
     price: Joi.number().min(0).required(),
     priceAfterDiscount: Joi.number().min(0),
     sold: Joi.number().min(0),
@@ -41,28 +43,30 @@ const updateProductVal=Joi.object({
     title: Joi.string().min(1).max(50),
     slug: Joi.string().min(1).max(50),
     desc: Joi.string().min(1),
-    imgCover: Joi.object({
-        fieldname: Joi.string().required(),
-        originalname: Joi.string().required(),
-        encoding: Joi.string().required(),
-        mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
-        size: Joi.number().max(5242880).required(),
-        destination: Joi.string().required(),
-        filename: Joi.string().required(),
-        path: Joi.string().required()
-    }),
-    images: Joi.array().items(
-        Joi.object({
-            fieldname: Joi.string().required(),
-            originalname: Joi.string().required(),
-            encoding: Joi.string().required(),
-            mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
-            size: Joi.number().max(5242880).required(),
-            destination: Joi.string().required(),
-            filename: Joi.string().required(),
-            path: Joi.string().required()
-        })
-    ).min(0),
+    imgCover: Joi.allow(""),
+    // Joi.object({
+    //     fieldname: Joi.string().required(),
+    //     originalname: Joi.string().required(),
+    //     encoding: Joi.string().required(),
+    //     mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
+    //     size: Joi.number().max(5242880).required(),
+    //     destination: Joi.string().required(),
+    //     filename: Joi.string().required(),
+    //     path: Joi.string().required()
+    // }),
+    images: Joi.array().items().min(0),
+    // Joi.array().items(
+    //     Joi.object({
+    //         fieldname: Joi.string().required(),
+    //         originalname: Joi.string().required(),
+    //         encoding: Joi.string().required(),
+    //         mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
+    //         size: Joi.number().max(5242880).required(),
+    //         destination: Joi.string().required(),
+    //         filename: Joi.string().required(),
+    //         path: Joi.string().required()
+    //     })
+    // ).min(0),
     price: Joi.number().min(0),
     priceAfterDiscount: Joi.number().min(0),
     sold: Joi.number().min(0),

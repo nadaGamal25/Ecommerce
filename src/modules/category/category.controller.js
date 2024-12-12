@@ -7,7 +7,7 @@ import { deleteOne, getAll, getOne } from "../handler/handler.js"
 import { deleteImageFile } from "../../utils/deleteOldImage.js"
 import { ApiFeatures } from "../../utils/apiFeatures.js"
 import { Product } from "../../../database/models/product.model.js"
-
+import { uploadToCloudinary } from "../../fileUpload/fileUpload.js";
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
@@ -21,7 +21,13 @@ import { Product } from "../../../database/models/product.model.js"
 
 const addCategory=catchError(async(req,res,next)=>{
     req.body.slug=slugify(req.body.name)
-    req.body.img=req.file.filename
+    // req.body.img=req.file.filename
+    if (req.file) {
+        // Upload image buffer to Cloudinary
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer, 'categories', req.file.originalname);
+        req.body.img = cloudinaryResult.secure_url; // Store Cloudinary URL in req.body
+    }
+    console.log(req.body)
     let category=new Category(req.body)
     await category.save()
     res.status(200).json({message:"success",category})
@@ -29,16 +35,21 @@ const addCategory=catchError(async(req,res,next)=>{
 
 const updateCategory=catchError(async(req,res,next)=>{
     if(req.body.slug) req.body.slug=slugify(req.body.name)
-    if(req.file) req.body.img=req.file.filename
+    // if(req.file) req.body.img=req.file.filename
+    if (req.file) {
+        // Upload image buffer to Cloudinary
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer, 'categories', req.file.originalname);
+        req.body.img = cloudinaryResult.secure_url; // Store Cloudinary URL in req.body
+    }
     let category = await Category.findById(req.params.id);
 
     if (!category) {
         return next(new AppError("Category not found", 404));
       }
-    if (req.file && category.img) {
-        let filename = category.img.split("categories/")[1]
-        deleteImageFile(filename,'categories');
-  }
+//     if (req.file && category.img) {
+//         let filename = category.img.split("categories/")[1]
+//         deleteImageFile(filename,'categories');
+//   }
 
   category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.status(200).json({ message: "Success", category });
@@ -51,11 +62,11 @@ const deleteCategory = catchError(async (req, res, next) => {
     }
     
     // Remove the image file
-    if (document.img) {
-        const filename = document.img.split("categories/")[1]
-        // console.log(filename)
-        deleteImageFile(filename,'categories');
-    }
+    // if (document.img) {
+    //     const filename = document.img.split("categories/")[1]
+    //     // console.log(filename)
+    //     deleteImageFile(filename,'categories');
+    // }
 
     await Category.findByIdAndDelete(req.params.id);
     await SubCategory.deleteMany({ category: req.params.id });
