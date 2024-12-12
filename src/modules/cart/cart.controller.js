@@ -83,7 +83,7 @@ const applyCoupon=catchError(async(req,res,next)=>{
     if(!coupon) return next(new AppError('invalid coupon',404))
     let cart =await Cart.findOne({user:req.user._id})
     cart.discount =coupon.discount
-    // calcTotalPrice(cart)
+    calcTotalPrice(cart)
     await cart.save()
     res.status(200).json({message:'success',cart})
 })
